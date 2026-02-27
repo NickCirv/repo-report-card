@@ -1,0 +1,14 @@
+{
+  "name": "repo-report-card",
+  "version": "1.0.0",
+  "description": "Generate a letter-grade report card for any git repo",
+  "type": "module",
+  "bin": { "repo-report-card": "./bin/grade.js" },
+  "scripts": { "start": "node bin/grade.js", "lint": "node --check src/*.js bin/grade.js" },
+  "dependencies": { "chalk": "^5.3.0", "commander": "^12.1.0" },
+  "engines": { "node": ">=18.0.0" },
+  "keywords": ["repo", "grade", "audit", "cli", "developer-tools", "code-quality"],
+  "author": "NickCirv <nick@cirvgreen.com>",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/NickCirv/repo-report-card.git" }
+}
