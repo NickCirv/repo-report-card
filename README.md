@@ -1,68 +1,81 @@
-<div align="center">
-  <img src="banner.svg" alt="Repo Report Card" width="800" />
-</div>
+<p align="center">
+  <img src="banner.svg" width="800" alt="repo-report-card" />
+</p>
 
-<div align="center">
-  <strong>Generate a letter-grade report card for any git repo — no API keys required.</strong>
-</div>
+<h1 align="center">repo-report-card</h1>
+<p align="center"><strong>Your repo just got graded. How did it do?</strong></p>
 
-<br />
+<p align="center">
+  <a href="#install"><img src="https://img.shields.io/badge/npx-repo--report--card-blue?style=flat-square&logo=npm" alt="npx" /></a>
+  <img src="https://img.shields.io/badge/grades-A%2B%20to%20F-green?style=flat-square" alt="grades" />
+  <img src="https://img.shields.io/badge/zero%20config-✓-brightgreen?style=flat-square" alt="zero config" />
+  <img src="https://img.shields.io/badge/offline-100%25%20local-orange?style=flat-square" alt="offline" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT" /></a>
+</p>
 
-<div align="center">
+<p align="center">
+  <em>Letter grades for commits, docs, structure, security, and CI/CD.<br/>Like a code review — but for your entire repo.</em>
+</p>
 
-[![npm version](https://img.shields.io/npm/v/repo-report-card?color=%233B82F6)](https://npmjs.com/package/repo-report-card)
-[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+---
 
-</div>
+## The problem
+
+You think your repo is well-maintained. But is it?
+
+Does it have a `LICENSE`? Are your commits readable? Is there a `.env` file that shouldn't be there? Tests? CI? A `CONTRIBUTING.md`?
+
+**repo-report-card scans your repo and gives you a letter grade. A+ to F. No opinions — just facts.**
 
 ---
 
 ## Install
 
 ```bash
-npm install -g repo-report-card
+npx repo-report-card              # grade current repo
+npx repo-report-card ~/my-project # grade any repo
+npx repo-report-card badge        # get a markdown badge for your README
 ```
 
-Or run without installing:
+Or install globally:
 
 ```bash
-npx repo-report-card [path]
+npm install -g repo-report-card
 ```
 
 ---
 
-## Quick Demo
+## What it looks like
 
 ```
   ╔══════════════════════════════════════╗
   ║       REPO REPORT CARD               ║
   ╚══════════════════════════════════════╝
 
-  ██╗  ██╗
-  ███╗ ██╗
-  ████╗██╗
-  ██╔████╗
-  ██║╚███╗
-  ╚═╝  ╚═╝
+  ██████╗
+  ██╔══██╗
+  ██████╔╝
+  ██╔══██╗
+  ██████╔╝  -
+  ╚═════╝
 
-  Overall Score: 82/100 — B+
+  Overall Score: 78/100 — B-
 
   ─────────────────────────────────────
   Category Breakdown
   ─────────────────────────────────────
-  A-   Commit Hygiene     ██████████░  87/100
-  B+   Documentation      ████████░░░  80/100
-  A    Code Structure      █████████░░  90/100
-  A-   Security           ██████████░  85/100
-  C+   CI/CD              ██████░░░░░  65/100
+  A    Commit Hygiene      █████████░  90/100
+  B+   Documentation       ████████░░  85/100
+  B    Code Structure      ████████░░  80/100
+  A-   Security            █████████░  88/100
+  F    CI/CD               ░░░░░░░░░░  0/100
 
   ─────────────────────────────────────
   Top Improvements
   ─────────────────────────────────────
-  1. [CI/CD] No CI/CD configuration — add GitHub Actions or similar
-  2. [Documentation] No CHANGELOG — consider Keep a Changelog format
-  3. [Commit Hygiene] Only 42% conventional commits (target 80%+)
+  1. Add GitHub Actions workflow for CI
+  2. Add test directory with unit tests
+  3. Add CONTRIBUTING.md for open source
 ```
 
 ---
@@ -71,74 +84,90 @@ npx repo-report-card [path]
 
 ```bash
 # Grade the current directory
-repo-report-card
+npx repo-report-card
 
 # Grade a specific repo
-repo-report-card /path/to/repo
+npx repo-report-card /path/to/repo
 
-# Compare two repos
-repo-report-card compare ./my-repo ./other-repo
+# Compare two repos side by side
+npx repo-report-card compare ./frontend ./backend
 
-# Output a markdown badge
-repo-report-card badge ./my-repo
+# Get a badge for your README
+npx repo-report-card badge
+# → ![Repo Grade](https://img.shields.io/badge/repo%20grade-B%2B-blue)
 
-# Show all findings (verbose)
-repo-report-card --verbose
+# See every individual finding
+npx repo-report-card --verbose
 
-# Output as JSON
-repo-report-card --format json
+# Output as JSON (pipe to jq, use in CI)
+npx repo-report-card --format json
 
-# Output as Markdown
-repo-report-card --format markdown
+# Output as Markdown (paste into docs)
+npx repo-report-card --format markdown
 
-# Grade a single category
-repo-report-card --category commits
-repo-report-card --category docs
-repo-report-card --category structure
-repo-report-card --category security
-repo-report-card --category ci
+# Drill into a single category
+npx repo-report-card --category commits
+npx repo-report-card --category docs
+npx repo-report-card --category structure
+npx repo-report-card --category security
+npx repo-report-card --category ci
 ```
 
 ---
 
-## Grading Categories
+## What gets graded
 
-| Category | Weight | What It Checks |
+| Category | Weight | What's checked |
 |----------|--------|----------------|
-| **Commit Hygiene** | 20% | Conventional commits %, message length, frequency, author diversity, merge ratio |
-| **Documentation** | 20% | README depth, LICENSE, CONTRIBUTING, CHANGELOG, docs/ directory |
-| **Code Structure** | 25% | src/lib directory, test files, .gitignore quality, no large binaries, package.json scripts |
-| **Security** | 20% | No .env committed, no hardcoded secrets, sensitive .gitignore patterns, lockfile |
+| **Commit Hygiene** | 20% | Conventional commits, message quality, frequency, author diversity |
+| **Documentation** | 20% | README depth, LICENSE, CHANGELOG, CONTRIBUTING, docs/ directory |
+| **Code Structure** | 25% | src/ directory, test files, .gitignore quality, no binaries, scripts |
+| **Security** | 20% | No .env committed, no hardcoded secrets, lockfile present, sensitive patterns |
 | **CI/CD** | 15% | GitHub Actions, Dockerfile, deploy configs, pre-commit hooks, linter setup |
 
 ---
 
-## Scoring
+## Grade scale
 
-| Grade | Score | Meaning |
-|-------|-------|---------|
-| A+ | 95-100 | Exceptional — reference-quality repo |
-| A | 90-94 | Excellent — production ready |
-| A- | 85-89 | Very good — minor gaps |
-| B+ | 80-84 | Good — a few improvements needed |
-| B | 75-79 | Solid — noticeable gaps |
-| B- | 70-74 | Decent — several areas to address |
-| C+ | 65-69 | Below average — needs work |
-| C | 60-64 | Needs improvement |
-| C- | 55-59 | Poor |
-| D | 40-54 | Very poor |
-| F | <40 | Critical issues |
+```
+A+ (95-100) · A (90-94) · A- (85-89)
+B+ (80-84)  · B (75-79)  · B- (70-74)
+C+ (65-69)  · C (60-64)  · C- (55-59)
+D  (40-54)  · F (0-39)
+```
+
+---
+
+## Use in CI
+
+Fail the build if your repo quality drops:
+
+```yaml
+- name: Grade repo
+  run: |
+    SCORE=$(npx repo-report-card --format json | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8');console.log(JSON.parse(d).score)")
+    echo "Score: $SCORE"
+    if [ "$SCORE" -lt 70 ]; then echo "Quality gate failed (score < 70)"; exit 1; fi
+```
+
+---
+
+## Why this exists
+
+> "Good code" is subjective. "Has no LICENSE file" is a fact.
+
+repo-report-card checks the things everyone agrees matter but nobody actually checks. Run it on your own repos. Run it on repos you're evaluating. Run it before you open source something. Drop the badge in your README.
 
 ---
 
 ## Features
 
 - **Zero API keys** — pure local analysis of git history and repo structure
-- **Fast** — runs entirely offline, results in seconds
-- **Compare repos** — side-by-side comparison with winner detection
-- **Badge generation** — drop a shield into your README
-- **Multiple formats** — terminal (chalk), JSON, Markdown
-- **Verbose mode** — see every individual finding per category
+- **100% offline** — no network requests, runs in seconds
+- **Compare repos** — side-by-side with winner detection
+- **Badge generation** — shields.io badge ready to paste
+- **Multiple output formats** — terminal, JSON, Markdown
+- **Verbose mode** — every individual finding per category
 - **Single category** — drill into one dimension at a time
 
 ---
@@ -156,4 +185,4 @@ node bin/grade.js .
 
 ## License
 
-MIT — Copyright (c) 2026 [NickCirv](https://github.com/NickCirv)
+MIT — Built by [@NickCirv](https://github.com/NickCirv)
