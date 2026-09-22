@@ -1,127 +1,75 @@
-![repo-report-card — letter grades for commits, docs, structure, security, and CI/CD](assets/banner.png)
+![repo-report-card — Nicholas Ashkar editorial artwork](assets/nicholas-ashkar/banner.png)
 
-<div align="center">
+# repo-report-card
 
-**A+ to F. For your entire repo. Zero config. Zero API keys. 100% offline.**
+Summarize a local repository against a transparent, opinionated hygiene rubric.
 
-![license](https://img.shields.io/badge/license-MIT-blue?labelColor=0B0A09)
-![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen?labelColor=0B0A09)
-![categories](https://img.shields.io/badge/categories-5%20graded-8B92F6?labelColor=0B0A09)
-![offline](https://img.shields.io/badge/offline-100%25%20local-brightgreen?labelColor=0B0A09)
+Grades commits, documentation, structure, basic security patterns and CI file presence. JSON/Markdown outputs and side-by-side comparison help review the underlying findings.
 
-</div>
 
----
+<a id="install"></a>
 
-"Good code" is subjective. "No LICENSE file" is a fact. `repo-report-card` checks the things everyone agrees matter but nobody actually audits — and gives you a letter grade for each.
+## Quickstart
 
-```
-  ╔══════════════════════════════════════╗
-  ║       REPO REPORT CARD               ║
-  ╚══════════════════════════════════════╝
-
-  Overall Score: 78/100 — B-
-
-  ─────────────────────────────────────
-  Category Breakdown
-  ─────────────────────────────────────
-  A    Commit Hygiene      █████████░  90/100
-  B+   Documentation       ████████░░  85/100
-  B    Code Structure      ████████░░  80/100
-  A-   Security            █████████░  88/100
-  F    CI/CD               ░░░░░░░░░░   0/100
-
-  ─────────────────────────────────────
-  Top Improvements
-  ─────────────────────────────────────
-  1. Add GitHub Actions workflow for CI
-  2. Add test directory with unit tests
-  3. Add CONTRIBUTING.md for open source
-```
-
-## Install
-
-No npm account required — runs straight from GitHub:
+Package runtime requirement: Node.js `>=20`. Git is needed to obtain this pinned source checkout.
 
 ```bash
-npx github:NickCirv/repo-report-card
+git clone https://github.com/NickCirv/repo-report-card.git
+cd repo-report-card
+git checkout 1d672e037e985aab1b063cd2c04730af03e7e562
+npm install --ignore-scripts
+node bin/grade.js . --format json
 ```
+
+This source-derived example has not been executed in this review. The command calculates a report from the local checkout; it does not query current CI runs or execute tests.
+
+
+
+<a id="what-gets-graded"></a>
+
+<a id="grade-scale"></a>
 
 ## Usage
 
 ```bash
-# grade the current repo
-npx github:NickCirv/repo-report-card
-
-# grade a specific repo
-npx github:NickCirv/repo-report-card ~/my-project
-
-# compare two repos side by side
-npx github:NickCirv/repo-report-card compare ./frontend ./backend
-
-# get a README badge for your repo grade
-npx github:NickCirv/repo-report-card badge
-
-# verbose: show every individual finding
-npx github:NickCirv/repo-report-card --verbose
-
-# JSON output (pipe to jq, use in CI)
-npx github:NickCirv/repo-report-card --format json
-
-# Markdown output (paste into docs)
-npx github:NickCirv/repo-report-card --format markdown
-
-# drill into a single category
-npx github:NickCirv/repo-report-card --category commits
-npx github:NickCirv/repo-report-card --category security
+node bin/grade.js /path/to/project --category docs --verbose
+node bin/grade.js compare /path/to/one /path/to/two --format json
 ```
 
-| Flag | Description |
-|------|-------------|
-| `[path]` | Repo to grade (default: current directory) |
-| `-f, --format <type>` | Output format: `text`, `json`, `markdown` (default: `text`) |
-| `-v, --verbose` | Show all findings per category |
-| `-c, --category <name>` | Grade one category: `commits`, `docs`, `structure`, `security`, `ci` |
+`badge [path]` prints a badge string for the computed grade. Treat the findings as the useful output, not the letter alone.
 
-## What gets graded
 
-| Category | Weight | What's checked |
-|----------|--------|----------------|
-| **Commit Hygiene** | 20% | Conventional commits, message quality, frequency, author diversity |
-| **Documentation** | 20% | README depth, LICENSE, CHANGELOG, CONTRIBUTING, docs/ directory |
-| **Code Structure** | 25% | src/ directory, test files, .gitignore quality, no binaries, scripts |
-| **Security** | 20% | No .env committed, no hardcoded secrets, lockfile present, sensitive patterns |
-| **CI/CD** | 15% | GitHub Actions, Dockerfile, deploy configs, pre-commit hooks, linter setup |
+<a id="what-it-is-not"></a>
 
-## Grade scale
+## Behavior and limits
 
-```
-A+ (95-100) · A (90-94) · A- (85-89)
-B+ (80-84)  · B (75-79)  · B- (70-74)
-C+ (65-69)  · C (60-64)  · C- (55-59)
-D  (40-54)  · F  (0-39)
-```
+A high grade is not a certification of software quality or security. The security scanner is capped and pattern-based; its `.env` finding tests file existence, not whether Git tracks the file. CI checks inspect configuration, not successful runs. Comparison is meaningful only with these rubric limitations understood.
 
-## Use in CI
 
-Fail the build if repo quality drops below a threshold:
+<a id="use-in-ci"></a>
 
-```yaml
-- name: Grade repo
-  run: |
-    SCORE=$(npx github:NickCirv/repo-report-card --format json | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8');console.log(JSON.parse(d).score)")
-    echo "Score: $SCORE"
-    if [ "$SCORE" -lt 70 ]; then echo "Quality gate failed (score < 70)"; exit 1; fi
-```
+## Development
 
-## What it is NOT
+Declared package scripts:
 
-- **Not a linter.** It audits repo-level signals (files present, commit patterns, structure) — not individual line-level code style.
-- **Not a security scanner.** The security category checks for committed secrets and missing lockfiles, not OWASP vulnerabilities in your code.
-- **Not a replacement for code review.** Think of it as the pre-review checklist that catches the obvious stuff so reviewers can focus on logic.
+| Script | Command |
+| --- | --- |
+| `start` | `node bin/grade.js` |
+| `lint` | `node --check src/*.js bin/grade.js` |
+| `test` | `node --test` |
 
----
+The captured smoke test only asks Node to syntax-check the entrypoint. It does not exercise behavior, integrations or failure paths. Neither that test nor installation was run in this review.
 
-<div align="center">
-<sub>100% offline · Node 18+ · MIT · by <a href="https://github.com/NickCirv">NickCirv</a></sub>
-</div>
+Current CI results and maintenance response times were not verified.
+
+## Documentation
+
+[Command and behavior reference](docs/REFERENCE.md) explains the options, output and interpretation.
+
+[Source review and claim ledger](docs/RESEARCH.md) records revision `1d672e037e98`, inspected files and verification gaps.
+
+## License and attribution
+
+Protected license and attribution files remain unchanged: [LICENSE](https://github.com/NickCirv/repo-report-card/blob/1d672e037e985aab1b063cd2c04730af03e7e562/LICENSE).
+
+[Artwork credits](assets/nicholas-ashkar/CREDITS.md) · [Nicholas Ashkar — consulting](https://nicholashkar.com/#oxblood-contact)
